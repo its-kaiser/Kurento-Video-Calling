@@ -1,9 +1,9 @@
 package com.example.kurento
 
 import com.example.kurento.models.Message
-import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
+import org.json.JSONObject
 import java.net.URISyntaxException
 
 class SocketManager {
@@ -14,13 +14,23 @@ class SocketManager {
     init {
         try {
             socket = IO.socket(SOCKET_URL)
+            socket?.on("message"){
+
+            }
             socket?.connect()
         } catch (e: URISyntaxException) {
             e.printStackTrace()
         }
     }
+
+
     fun emitMessage(message:Message){
-        val jsonMessage = Gson().toJson(message,Message::class.java)
+        val jsonMessage = JSONObject().apply {
+            put("event",message.event)
+            put("userName",message.userName)
+            put("roomName",message.roomName)
+        }
+
         socket!!.emit("message",jsonMessage)
     }
     fun disconnectSocket(){

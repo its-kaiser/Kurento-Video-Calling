@@ -1,5 +1,6 @@
 package com.example.kurento
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -7,19 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kurento.databinding.ActivityMainBinding
-import com.example.kurento.models.Message
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var socketManager: SocketManager
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        socketManager = SocketManager()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -38,19 +35,12 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }else{
-                    val message = Message(
-                        event = "joinRoom",
-                        userName = userName,
-                        roomName = roomName
-                    )
-                    socketManager.emitMessage(message)
+                    val intent = Intent(this@MainActivity, VideoCalling::class.java)
+                    intent.putExtra("userName",userName)
+                    intent.putExtra("roomName",roomName)
+                    startActivity(intent)
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        socketManager.disconnectSocket()
-        super.onDestroy()
     }
 }
