@@ -1,14 +1,19 @@
 package com.example.kurento
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kurento.models.Message
+import com.example.kurento.utils.NewMessageInterface
 
-class VideoCalling : AppCompatActivity() {
+class VideoCalling : AppCompatActivity(),NewMessageInterface {
 
+    companion object{
+        const val TAG = "VideoCalling"
+    }
     private lateinit var socketManager: SocketManager
     private lateinit var userName: String
     private lateinit var roomName: String
@@ -22,7 +27,7 @@ class VideoCalling : AppCompatActivity() {
             insets
         }
 
-        socketManager = SocketManager()
+        socketManager = SocketManager(this)
         userName = intent.getStringExtra("userName").toString()
         roomName = intent.getStringExtra("roomName").toString()
         joinRoom(userName,roomName)
@@ -37,6 +42,24 @@ class VideoCalling : AppCompatActivity() {
         socketManager.emitMessage(message)
     }
 
+    override fun onNewMessage(message: Message){
+        Log.d(TAG,"onNewMessage: $message")
+
+        when(message.event){
+            "newParticipantArrived"->{
+
+            }
+            "existingParticipants"->{
+
+            }
+            "receiveVideoAnswer"->{
+
+            }
+            "candidate"->{
+
+            }
+        }
+    }
     override fun onDestroy() {
         socketManager.disconnectSocket()
         super.onDestroy()

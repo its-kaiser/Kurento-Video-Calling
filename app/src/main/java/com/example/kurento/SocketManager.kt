@@ -1,12 +1,14 @@
 package com.example.kurento
 
 import com.example.kurento.models.Message
+import com.example.kurento.utils.NewMessageInterface
+import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONObject
 import java.net.URISyntaxException
 
-class SocketManager {
+class SocketManager(private val messageInterface: NewMessageInterface) {
 
     private var socket: Socket? = null
     val SOCKET_URL = "http://192.168.230.199:3000"
@@ -14,8 +16,18 @@ class SocketManager {
     init {
         try {
             socket = IO.socket(SOCKET_URL)
-            socket?.on("message"){
-
+            socket?.on("message"){args->
+                args?.let { value ->
+                    if (value.isNotEmpty()) {
+                        val message = value[0]
+                        messageInterface.onNewMessage(
+                            Gson().fromJson(
+                                message.toString(),
+                                Message::class.java
+                            )
+                        )
+                    }
+                }
             }
             socket?.connect()
         } catch (e: URISyntaxException) {

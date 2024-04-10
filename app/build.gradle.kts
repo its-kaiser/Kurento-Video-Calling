@@ -54,4 +54,5 @@ dependencies {
         exclude("org.json" ,"json")
     }
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("fi.vtt.nubomedia:webrtcpeer-android:[1.1.2]")
 }
